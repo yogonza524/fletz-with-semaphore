@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Ficha de un fletero</title>
+
+	<!-- Compiled and minified CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css" />
+
+    <!-- Compiled and minified JavaScript -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+</head>
+<body>
+
+    <div class="row">
+        <div class="col s12 m6">
+          <div class="card blue-grey darken-1">
+            <div class="card-content white-text">
+              <span class="card-title" th:text="${fletero.apellidoYNombre}"></span>
+              <ul class="collection" style="color:blue;">
+                <li class="collection-item" th:text="${fletero.localidad}"></li>
+                <li class="collection-item" th:text="${fletero.imagen}"></li>
+                <li class="collection-item">
+                    <img th:src="${fletero.imagen}" />
+                </li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    
+    <a id="buscarFletero" class="waves-effect waves-light btn-large">Buscar Fletero</a>
+
+    <div class="input-field col s6">
+          <input id="nombreFleteroInput" placeholder="Placeholder" type="text" class="validate" />
+          <label for="first_name">Nombre del Fletero</label>
+    </div>
+
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+        
+    <script>
+
+    	var url = "http://localhost:8085/dummyFleteros/";
+    	var nombreFletero = "Gonzalo%20Mendoza";
+        
+        function buscarUnFleteroPorTiempo(tiempoEnMilisegundos) {
+          setTimeout(function() {
+            var input = $("#nombreFleteroInput").val();
+
+            if (input) {
+              nombreFletero = input;
+            }
+            //Asincrono, hago la peticion, se arma un hilo de ejecucion que queda bloqueado
+            //esperando la respuesta del servidor, y el hilo principal (el del navegador)
+            //Continua trabajando
+            $.ajax
+                      ({
+                        type: "GET",
+                        url: url + nombreFletero,
+                        success: function(response)
+                        {
+                           if (response.data) {
+                              var fletero = response.data;
+
+                              $("#nombreFletero").text(fletero.apellidoYNombre);
+                              $("#localidad").text(fletero.localidad);
+                           }
+                        }
+                      });
+
+                  console.log("Soy un hilo que siguio trabajando");
+          }, tiempoEnMilisegundos);
+        }
+
+        $("#nombreFleteroInput").keydown(function(event) {
+            buscarUnFleteroPorTiempo(5000);
+        });
+
+        $(document).ready(function(){
+        	       
+        });
+    </script>
+</body>
+</html>
